@@ -7,25 +7,20 @@ class NotesService {
     this._notes = [];
   }
 
-  addNote({ title, tags, body }) {
+  addNote({ title, body, tags }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const newNote = {
-      title,
-      tags,
-      body,
-      id,
-      createdAt,
-      updatedAt,
+      title, tags, body, id, createdAt, updatedAt,
     };
 
     this._notes.push(newNote);
 
-    const issuccess = this._notes.filter((note) => note.id === id).length > 0;
+    const isSuccess = this._notes.filter((note) => note.id === id).length > 0;
 
-    if (!issuccess) {
+    if (!isSuccess) {
       throw new InvariantError('Catatan gagal ditambahkan');
     }
 
@@ -44,7 +39,7 @@ class NotesService {
     return note;
   }
 
-  editNote(id, { title, body, tags }) {
+  editNoteById(id, { title, body, tags }) {
     const index = this._notes.findIndex((note) => note.id === id);
 
     if (index === -1) {
@@ -62,12 +57,11 @@ class NotesService {
     };
   }
 
-  deleteNote(id) {
+  deleteNoteById(id) {
     const index = this._notes.findIndex((note) => note.id === id);
     if (index === -1) {
-      throw NotFoundError('Catatan gagal dihapus. Id tidak ditemukan');
+      throw new NotFoundError('Catatan gagal dihapus. Id tidak ditemukan');
     }
-
     this._notes.splice(index, 1);
   }
 }

@@ -9,7 +9,7 @@ class NotesService {
     this._pool = new Pool();
   }
 
-  async addNote({ title, tags, body }) {
+  async addNote({ title, body, tags }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -22,7 +22,7 @@ class NotesService {
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError('catatan gagal ditambahkan');
+      throw new InvariantError('Catatan gagal ditambahkan');
     }
 
     return result.rows[0].id;
@@ -38,16 +38,16 @@ class NotesService {
       text: 'SELECT * FROM notes WHERE id = $1',
       values: [id],
     };
-
     const result = await this._pool.query(query);
-    if (!result.rows[0].id) {
-      throw new NotFoundError('catatan tidak ditemukan');
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Catatan tidak ditemukan');
     }
 
     return result.rows.map(mapDBToModel)[0];
   }
 
-  async editNote(id, { title, body, tags }) {
+  async editNoteById(id, { title, body, tags }) {
     const updatedAt = new Date().toISOString();
     const query = {
       text: 'UPDATE notes SET title = $1, body = $2, tags = $3, updated_at = $4 WHERE id = $5 RETURNING id',
@@ -57,11 +57,11 @@ class NotesService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new InvariantError('Gagal memperbarui catatan. Id tidak ditemukan');
+      throw new NotFoundError('Gagal memperbarui catatan. Id tidak ditemukan');
     }
   }
 
-  async deleteNote(id) {
+  async deleteNoteById(id) {
     const query = {
       text: 'DELETE FROM notes WHERE id = $1 RETURNING id',
       values: [id],
@@ -70,7 +70,7 @@ class NotesService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new InvariantError('Gagal menghapus catatan. Id tidak ditemukan');
+      throw new NotFoundError('Catatan gagal dihapus. Id tidak ditemukan');
     }
   }
 }

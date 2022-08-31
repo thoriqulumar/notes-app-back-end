@@ -1,7 +1,7 @@
-const NotePayloadSchema = require('./schema');
 const InvariantError = require('../../exceptions/InvariantError');
+const { NotePayloadSchema } = require('./schema');
 
-const NoteValidator = {
+const NotesValidator = {
   validateNotePayload: (payload) => {
     const validationResult = NotePayloadSchema.validate(payload);
     if (validationResult.error) {
@@ -10,4 +10,4 @@ const NoteValidator = {
   },
 };
 
-module.exports = NoteValidator;
+module.exports = NotesValidator;
